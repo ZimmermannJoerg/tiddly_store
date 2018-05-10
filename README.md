@@ -1,5 +1,5 @@
-This is the fork of the store.php script out of the bidix tiddlyhome project.
-It changes some of the more 'questionable' code (security-wise) in the store.php script.
+This is the fork of the store.php script out of the bidix tiddlyhome and makefu/tiddly_store project.
+Here is the support for PHP7.0 of the store.php script that I missed / needed.
 
 # Installation
 
