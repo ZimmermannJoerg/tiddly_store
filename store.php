@@ -4,21 +4,21 @@
 Edit these lines according to your need
 ***/
 //{{{
-$AUTHENTICATE_USER = true;	// true | false - disables user authentication
+$AUTHENTICATE_USER = true;  // true | false - disables user authentication
 $override_filename = true;  // overrides the given filename with [username].html, does not work without 'AUTHENTICATE_USER'
                             // usernames shall not contain slashes to avoid path traversal
 $override_savedir = true;   // i discourage anyone from using user-provided directory names
 $savedir = './';            // default save directory (uploadDir)
-$override_backupdir = true; // override the given backupdir 
+$override_backupdir = true; // override the given backupdir
 $backupdir = './backup';    // default backup directory
-                            
-$USERS = array(
-	'user1'=>'pass1', 
-	'user2'=>'pass2', 
-  'user3'=>'pass3'); // set usernames and strong passwords
 
-$DEBUG = false;				// true | false
-$CLEAN_BACKUP = true; 		// during backuping a file, remove overmuch backups
+$USERS = array(
+	'user1'=>'pass1',
+	'user2'=>'pass2',
+  'user3'=>'pass3');        // set usernames and strong passwords
+
+$DEBUG = false;             // true | false
+$CLEAN_BACKUP = true;       // during backuping a file, remove overmuch backups
 $FOLD_JS = true; 			// if javascript files have been expanded during download the fold them
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 //}}}
@@ -30,14 +30,18 @@ No change needed under
 
 /***
  * store.php - upload a file in this directory
- * version :1.7.0 - 2015/03/16 - makefu@github   
- * 
- * see : 
-*   https://excogitation.de/wiki/#Tiddlywiki%20saving%20with%20php%20script for usage
- *	http://www.php.net/manual/en/features.file-upload.php 
+ * version :1.7.1 - 2018/05/24 - ZimmermannJoerg
+ * Improvement: replace the split() function with explode() for php 7.0 support
+ * Cleanup: cleaning up the useless spaces and tabs at the end of a line
+ *
+ * version :1.7.0 - 2015/03/16 - makefu@github
+ *
+ * see :
+ *   https://excogitation.de/wiki/#Tiddlywiki%20saving%20with%20php%20script for usage
+ *	http://www.php.net/manual/en/features.file-upload.php
  *		for details on uploading files
- * usage : 
- *	POST  
+ * usage :
+ *	POST
  *		UploadPlugin[backupDir=<backupdir>;user=<user>;password=<password>;uploadir=<uploaddir>;[debug=1];;]
  *		userfile <file>
  *	GET
@@ -45,7 +49,7 @@ No change needed under
  * each external javascript file included by download.php is change by a reference (src=...)
  *
  * Revision history
- * V1.7.0 - 2015/03/16 
+ * V1.7.0 - 2015/03/16
  * Security: - add override_filename to ignore the given filename
  *           - add override_savedir and override_backupdir
  * V1.6.1 - 2007/08/01
@@ -59,7 +63,7 @@ No change needed under
  * V1.5.0 - 2007/01/15
  * Correct: a bug in moving uploadFile in uploadDir thanks to DaniGutiérrez for reporting
  * Refactoring
- * V 1.4.3 - 2006/10/17 
+ * V 1.4.3 - 2006/10/17
  * Test if $filename.lock exists for GroupAuthoring compatibility
  * return mtime, destfile and backupfile after the message line
  * V 1.4.2 - 2006/10/12
@@ -72,16 +76,16 @@ No change needed under
  *	make recusively directories if necessary for backupDir and uploadDir
  * v 1.3 - 2006/02/17
  *	presence and value of user are checked with $USERS Array (thanks to PauloSoares)
- * v 1.2 - 2006/02/12 
-  *	POST  
+ * v 1.2 - 2006/02/12
+ *	POST
  *		UploadPlugin[backupDir=<backupdir>;user=<user>;password=<password>;]
  *		userfile <file>
-*	if $AUTHENTICATE_USER
- *		presence and value of user and password are checked with 
+ *	if $AUTHENTICATE_USER
+ *		presence and value of user and password are checked with
  *		$USER and $PASSWORD
- * v 1.1 - 2005/12/23 
+ * v 1.1 - 2005/12/23
  *	POST  UploadPlugin[backupDir=<backupdir>]  userfile <file>
- * v 1.0 - 2005/12/12 
+ * v 1.0 - 2005/12/12
  *	POST userfile <file>
  *
  * Copyright (c) BidiX@BidiX.info 2005-2007
@@ -109,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<p align="center">This page is designed to upload a <a href="http://www.tiddlywiki.com/">TiddlyWiki<a>.</p>
-		<p align="center">for details see : <a href="https://excogitation.de/wiki/#Tiddlywiki%20saving%20with%20php%20script">https://excogitation.de/ wiki<a>.</p>	
+		<p align="center">for details see : <a href="https://excogitation.de/wiki/#Tiddlywiki%20saving%20with%20php%20script">https://excogitation.de/ wiki<a>.</p>
 	</body>
 </html>
 <?php
@@ -119,7 +123,7 @@ exit;
 /*
  * POST Request
  */
-	 
+
 // Recursive mkdir
 function mkdirs($dir) {
 	if( is_null($dir) || $dir === "" ){
@@ -157,12 +161,12 @@ function ParseTWFileDate($s) {
 	$w = date("W",$d);
 
 	return array(
-		'year' => $m[1], 
-		'mon' => $m[2], 
-		'mday' => $m[3], 
-		'hours' => $m[4], 
-		'minutes' => $m[5], 
-		'seconds' => $m[6], 
+		'year' => $m[1],
+		'mon' => $m[2],
+		'mday' => $m[3],
+		'hours' => $m[4],
+		'minutes' => $m[5],
+		'seconds' => $m[6],
 		'week' => $w);
 }
 
@@ -173,7 +177,7 @@ function cleanFiles($dirname, $prefix) {
 	$hours = Array();
 	$mday = Array();
 	$year = Array();
-	
+
 	$toDelete = Array();
 
 	// need files recent first
@@ -184,7 +188,7 @@ function cleanFiles($dirname, $prefix) {
         array_push($files, $file);
     }
 	$files = array_reverse($files);
-	
+
 	// decides for each file
 	foreach ($files as $file) {
 		$fileTime = ParseTWFileDate(substr($file,strpos($file, '.')+1,strrpos($file,'.') - strpos($file, '.') -1));
@@ -198,7 +202,7 @@ function cleanFiles($dirname, $prefix) {
 			($now['mday'] == $fileTime['mday'])) {
 				if (isset($hours[$fileTime['hours']]))
 					array_push($toDelete, $file);
-				else 
+				else
 					$hours[$fileTime['hours']] = true;
 			}
 		elseif 	(($now['year'] == $fileTime['year']) &&
@@ -223,7 +227,7 @@ function replaceJSContentIn($content) {
 		$front = $matches[1];
 		$js = $matches[2];
 		$tail = $matches[3];
-		if (preg_match ("/<\/script>(.*)/ms", $tail,$matches2)) {		
+		if (preg_match ("/<\/script>(.*)/ms", $tail,$matches2)) {
 			$tail = $matches2[1];
 		}
 		$jsContent = "<script type=\"text/javascript\" src=\"$js\"></script>";
@@ -253,7 +257,7 @@ $destfile = $filename;
 
 // get options
 foreach($optionArr as $o) {
-	list($key, $value) = split('=', $o);
+	list($key, $value) = explode('=', $o);
 	$options[$key] = $value;
 }
 
@@ -282,7 +286,7 @@ if ($override_savedir){
   $uploadDir=$savedir;
 }elseif ( ($options['uploaddir']) ) {
 	$uploadDir = $options['uploaddir'];
-	// path control for uploadDir   
+	// path control for uploadDir
   if (!(strpos($uploadDir, "../") === false)) {
     echo "Error: directory to upload specifies a parent folder";
     toExit();
@@ -372,7 +376,7 @@ if (move_uploaded_file($_FILES['userfile']['tmp_name'], $destfile)) {
 	    }
 	    fclose($handle);
 	}
-    
+
 	chmod($destfile, 0644);
 	if($DEBUG) {
 		echo "Debug mode \n\n";
@@ -388,7 +392,7 @@ if (move_uploaded_file($_FILES['userfile']['tmp_name'], $destfile)) {
 	}
 	$mtime = filemtime($destfile);
 	echo("mtime:$mtime");
-} 
+}
 else {
 	echo "Error : " . $_FILES['error']." - File NOT uploaded !\n";
 
